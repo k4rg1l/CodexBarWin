@@ -47,9 +47,12 @@ To build or fork the source code:
 
 ## Install
 
-### Download And Run
+### Quick Start
 
-Download `CodexBarWin-*-win-x64.exe` from Releases and run it.
+1. Open the [CodexBarWin Releases page](https://github.com/k4rg1l/CodexBarWin/releases).
+2. Download the latest `CodexBarWin-*-win-x64.exe`.
+3. Run the file.
+4. Click the CodexBarWin icon in the Windows system tray.
 
 The release executable is self-contained, so you should not need to install the .NET runtime separately.
 
