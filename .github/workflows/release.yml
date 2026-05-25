@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  PROJECT_PATH: CodexBarWin.csproj
+  RID: win-x64
+
+jobs:
+  package:
+    name: Package Windows x64
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Resolve version
+        id: version
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_TYPE -eq "tag") {
+            $version = $env:GITHUB_REF_NAME
+          } else {
+            $version = "dev-$env:GITHUB_RUN_NUMBER"
+          }
+
+          "value=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Restore
+        shell: pwsh
+        run: dotnet restore $env:PROJECT_PATH -r $env:RID
+
+      - name: Publish self-contained app
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.value }}"
+          $publishDir = Join-Path $pwd "artifacts\publish\CodexBarWin-$version-$env:RID"
+
+          dotnet publish $env:PROJECT_PATH `
+            -c Release `
+            -r $env:RID `
+            --self-contained true `
+            --no-restore `
+            -p:WindowsPackageType=None `
+            -p:WindowsAppSDKSelfContained=true `
+            -p:PublishSingleFile=true `
+            -p:EnableMsixTooling=true `
+            -p:PublishReadyToRun=false `
+            -p:PublishTrimmed=false `
+            -p:DebugType=None `
+            -p:DebugSymbols=false `
+            -o $publishDir
+
+      - name: Prepare release artifact
+        id: package
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.value }}"
+          $publishDir = Join-Path $pwd "artifacts\publish\CodexBarWin-$version-$env:RID"
+          $packageDir = Join-Path $pwd "artifacts\package"
+          $exeName = "CodexBarWin-$version-$env:RID.exe"
+          $exePath = Join-Path $packageDir $exeName
+          $sha256Path = "$exePath.sha256"
+
+          New-Item -ItemType Directory -Path $packageDir -Force | Out-Null
+          Copy-Item -Path (Join-Path $publishDir "CodexBarWin.exe") -Destination $exePath -Force
+          $hash = (Get-FileHash -Path $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $exeName" | Set-Content -Path $sha256Path
+
+          "exe_path=$exePath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "exe_name=$exeName" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "sha256_path=$sha256Path" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "sha256_name=$(Split-Path -Leaf $sha256Path)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodexBarWin-${{ steps.version.outputs.value }}-${{ env.RID }}
+          path: |
+            ${{ steps.package.outputs.exe_path }}
+            ${{ steps.package.outputs.sha256_path }}
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = "${{ steps.version.outputs.value }}"
+          $exePath = "${{ steps.package.outputs.exe_path }}"
+          $sha256Path = "${{ steps.package.outputs.sha256_path }}"
+          $notesPath = Join-Path $pwd "artifacts\package\release-notes.md"
+
+          $releaseNotes = @"
+          CodexBarWin $version
+
+          CodexBar for Windows. A native system tray app for Codex usage limits.
+
+          Notes:
+          - Codex-only for now.
+          - Download CodexBarWin-$version-$env:RID.exe and run it directly.
+          - The release executable is self-contained.
+          - The app is not code-signed yet, so Windows may show a SmartScreen warning.
+          - App-owned data stays local under %LOCALAPPDATA%\CodexBarWin.
+          - CodexBarWin is not affiliated with OpenAI.
+
+          The .sha256 file can be used to verify the downloaded executable.
+          "@
+          $releaseNotes.Trim() | Set-Content -Path $notesPath
+
+          gh release view $version *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $version $exePath $sha256Path --clobber
+          } else {
+            gh release create $version $exePath $sha256Path --title "CodexBarWin $version" --notes-file $notesPath
+          }

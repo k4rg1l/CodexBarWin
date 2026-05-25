@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="CodexBarWin.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CodexBarWin"
+    Title="CodexBarWin">
+    <!--<Window.SystemBackdrop>
+        <DesktopAcrylicBackdrop />
+    </Window.SystemBackdrop>-->
+
+    <Grid x:Name="Root" Background="#FF000000">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.ThemeDictionaries>
+                    <ResourceDictionary x:Key="Light">
+                        <SolidColorBrush x:Key="ShellBrush" Color="#FFF3F7FF" />
+                        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FF2F2B55" />
+                        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FF8C78B0" />
+                        <SolidColorBrush x:Key="TextMutedBrush" Color="#FF4C4778" />
+                        <SolidColorBrush x:Key="AccentPurpleBrush" Color="#FFA27FFF" />
+                        <SolidColorBrush x:Key="SectionBrush" Color="#68FFFFFF" />
+                        <SolidColorBrush x:Key="SurfaceBrush" Color="#24FFFFFF" />
+                        <SolidColorBrush x:Key="TrackBrush" Color="#FFE3DFF0" />
+                        <SolidColorBrush x:Key="StrokeBrush" Color="#BFFFFFFF" />
+                        <SolidColorBrush x:Key="SoftStrokeBrush" Color="#FFE5E0F8" />
+                        <SolidColorBrush x:Key="AttentionBrush" Color="#FFB26072" />
+                    </ResourceDictionary>
+                    <ResourceDictionary x:Key="Dark">
+                        <SolidColorBrush x:Key="ShellBrush" Color="#FF151124" />
+                        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FFF5F0FF" />
+                        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FFCDBBFF" />
+                        <SolidColorBrush x:Key="TextMutedBrush" Color="#FFD7D0F5" />
+                        <SolidColorBrush x:Key="AccentPurpleBrush" Color="#FFB99BFF" />
+                        <SolidColorBrush x:Key="SectionBrush" Color="#2EFFFFFF" />
+                        <SolidColorBrush x:Key="SurfaceBrush" Color="#1CFFFFFF" />
+                        <SolidColorBrush x:Key="TrackBrush" Color="#3CFFFFFF" />
+                        <SolidColorBrush x:Key="StrokeBrush" Color="#00FFFFFF" />
+                        <SolidColorBrush x:Key="SoftStrokeBrush" Color="#36FFFFFF" />
+                        <SolidColorBrush x:Key="AttentionBrush" Color="#FFFF9EBA" />
+                    </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+
+        <Border
+            x:Name="Shell"
+            Padding="12"
+            Background="{ThemeResource ShellBrush}"
+            BorderBrush="{ThemeResource StrokeBrush}"
+            BorderThickness="1"
+            CornerRadius="0">
+            <Grid RowSpacing="7">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid MinHeight="36">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image
+                        Width="34"
+                        Height="34"
+                        VerticalAlignment="Center"
+                        AutomationProperties.Name="CodexBarWin logo"
+                        Source="Assets/Square44x44Logo.scale-200.png"
+                        Stretch="Uniform" />
+
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="9,0,8,0"
+                        VerticalAlignment="Center"
+                        Spacing="0">
+                        <TextBlock
+                            FontFamily="Bahnschrift"
+                            FontSize="17"
+                            FontWeight="SemiBold"
+                            Foreground="{ThemeResource TextPrimaryBrush}"
+                            Text="Codex Usage Limits" />
+                        <TextBlock
+                            FontSize="10"
+                            Foreground="{ThemeResource TextSecondaryBrush}"
+                            MaxLines="1"
+                            Text="{Binding HeaderSubtitle}"
+                            TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <Border
+                        x:Name="RefreshButtonSurface"
+                        Grid.Column="2"
+                        Width="30"
+                        Height="30"
+                        Margin="0,0,7,0"
+                        VerticalAlignment="Center"
+                        AutomationProperties.Name="Refresh"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="15"
+                        PointerEntered="RefreshButton_PointerEntered"
+                        PointerMoved="RefreshButton_PointerEntered"
+                        PointerExited="RefreshButton_PointerExited"
+                        PointerPressed="RefreshButton_PointerPressed"
+                        PointerReleased="RefreshButton_PointerEntered"
+                        Tapped="RefreshNow_Tapped">
+                        <Grid>
+                            <Rectangle
+                                x:Name="RefreshButtonChrome"
+                                Fill="{ThemeResource SurfaceBrush}"
+                                IsHitTestVisible="False"
+                                RadiusX="15"
+                                RadiusY="15"
+                                Stroke="{ThemeResource AccentPurpleBrush}"
+                                StrokeThickness="1" />
+                            <TextBlock
+                                x:Name="RefreshButtonGlyph"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="{ThemeResource AccentPurpleBrush}"
+                                IsHitTestVisible="False"
+                                Text="&#xE72C;"
+                                TextAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Border
+                        x:Name="ThemeToggleSurface"
+                        Grid.Column="3"
+                        Width="30"
+                        Height="30"
+                        VerticalAlignment="Center"
+                        AutomationProperties.Name="Toggle color theme"
+                        Background="{ThemeResource SurfaceBrush}"
+                        BorderBrush="{ThemeResource AccentPurpleBrush}"
+                        BorderThickness="1"
+                        CornerRadius="15"
+                        PointerEntered="ThemeToggle_PointerEntered"
+                        PointerMoved="ThemeToggle_PointerEntered"
+                        PointerExited="ThemeToggle_PointerExited"
+                        PointerPressed="ThemeToggle_PointerPressed"
+                        PointerReleased="ThemeToggle_PointerEntered"
+                        Tapped="ThemeToggle_Tapped">
+                        <TextBlock
+                            x:Name="ThemeToggleGlyph"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe UI Symbol"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="{ThemeResource AccentPurpleBrush}"
+                            IsHitTestVisible="False"
+                            Text="&#x263E;"
+                            TextAlignment="Center">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform Y="-1.25" />
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                    </Border>
+                </Grid>
+
+                <Border
+                    Grid.Row="1"
+                    Padding="10,7"
+                    Background="{ThemeResource SectionBrush}"
+                    BorderBrush="{ThemeResource SoftStrokeBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14">
+                    <Grid RowSpacing="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            FontSize="11"
+                            FontWeight="SemiBold"
+                            Foreground="{ThemeResource TextSecondaryBrush}"
+                            Text="{Binding UpdatedLine}" />
+
+                        <ItemsControl
+                            Grid.Row="1"
+                            ItemsSource="{Binding DetailItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid MinHeight="17">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="78" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            FontSize="11"
+                                            Foreground="{ThemeResource TextSecondaryBrush}"
+                                            Text="{Binding Label}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="{ThemeResource TextPrimaryBrush}"
+                                            HorizontalAlignment="Right"
+                                            Text="{Binding Value}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+
+                <ScrollViewer
+                    Grid.Row="2"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Hidden"
+                    VerticalScrollMode="{Binding UsageScrollMode}">
+                    <ItemsControl ItemsSource="{Binding UsageBuckets}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="0,0,0,6"
+                                    Padding="10,7"
+                                    Background="{ThemeResource SectionBrush}"
+                                    BorderBrush="{ThemeResource SoftStrokeBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="14">
+                                    <StackPanel Spacing="6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                FontSize="15"
+                                                FontWeight="SemiBold"
+                                                Foreground="{ThemeResource TextPrimaryBrush}"
+                                                Text="{Binding Name}"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                FontSize="11"
+                                                FontWeight="SemiBold"
+                                                Foreground="{ThemeResource AccentPurpleBrush}"
+                                                Text="{Binding PlanTypeLabel}"
+                                                Visibility="{Binding PlanTypeVisibility}" />
+                                        </Grid>
+
+                                        <Grid Visibility="{Binding PrimaryVisibility}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                FontSize="13"
+                                                FontWeight="SemiBold"
+                                                Foreground="{ThemeResource TextPrimaryBrush}"
+                                                Text="{Binding Primary.Title}" />
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                FontSize="11"
+                                                Foreground="{ThemeResource AccentPurpleBrush}"
+                                                Text="{Binding Primary.ResetLabel}" />
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextMutedBrush}"
+                                                Text="{Binding Primary.UsedLabel}" />
+                                            <Grid
+                                                Grid.Row="2"
+                                                Grid.ColumnSpan="2"
+                                                Height="10"
+                                                Margin="0,1,0,0">
+                                                <local:UsageMeter
+                                                    Height="6"
+                                                    VerticalAlignment="Center"
+                                                    FillBrush="{Binding Primary.MeterBrush}"
+                                                    TrackBrush="{ThemeResource TrackBrush}"
+                                                    UsedPercent="{Binding Primary.UsedPercent}" />
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid Visibility="{Binding SecondaryVisibility}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                FontSize="13"
+                                                FontWeight="SemiBold"
+                                                Foreground="{ThemeResource TextPrimaryBrush}"
+                                                Text="{Binding Secondary.Title}" />
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                FontSize="11"
+                                                Foreground="{ThemeResource AccentPurpleBrush}"
+                                                Text="{Binding Secondary.ResetLabel}" />
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextMutedBrush}"
+                                                Text="{Binding Secondary.UsedLabel}" />
+                                            <Grid
+                                                Grid.Row="2"
+                                                Grid.ColumnSpan="2"
+                                                Height="10"
+                                                Margin="0,1,0,0">
+                                                <local:UsageMeter
+                                                    Height="6"
+                                                    VerticalAlignment="Center"
+                                                    FillBrush="{Binding Secondary.MeterBrush}"
+                                                    TrackBrush="{ThemeResource TrackBrush}"
+                                                    UsedPercent="{Binding Secondary.UsedPercent}" />
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid Visibility="{Binding CreditsVisibility}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                FontSize="12"
+                                                FontWeight="SemiBold"
+                                                Foreground="{ThemeResource TextPrimaryBrush}"
+                                                Text="Credits" />
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextMutedBrush}"
+                                                Text="{Binding CreditsLabel}" />
+                                        </Grid>
+
+                                        <TextBlock
+                                            FontSize="11"
+                                            Foreground="{ThemeResource AttentionBrush}"
+                                            Text="{Binding LimitReachedLabel}"
+                                            TextWrapping="Wrap"
+                                            Visibility="{Binding LimitReachedVisibility}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <TextBlock
+                    Grid.Row="3"
+                    Margin="2,0,2,0"
+                    VerticalAlignment="Top"
+                    FontSize="11"
+                    Foreground="{ThemeResource AttentionBrush}"
+                    Text="{Binding AttentionLine}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding AttentionVisibility}" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
