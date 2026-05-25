@@ -14,8 +14,6 @@ CodexBarWin is not affiliated with OpenAI.
 
 ## Screenshots
 
-Screenshot account text uses example data.
-
 ![CodexBarWin open on a Windows desktop](docs/screenshots/codexbarwin-desktop.jpg)
 
 <p align="center">
